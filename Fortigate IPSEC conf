@@ -1,0 +1,42 @@
+# Logga in på FortiGate CLI
+
+config vpn ipsec phase1-interface
+    edit "VPN-to-198.51.100.1"
+        set interface "wan1"  # Ersätt med rätt gränssnitt
+        set mode main
+        set remote-gateway 198.51.100.1
+        set psksecret "enhemlignyckel"
+        set proposal aes256-sha256
+        set dhgrp 2
+        set keylife 28800
+    next
+end
+
+config vpn ipsec phase2-interface
+    edit "VPN-to-198.51.100.1-Phase2"
+        set phase1name "VPN-to-198.51.100.1"
+        set proposal aes256-sha256
+        set replay disable
+        set pfs disable
+        set keylifeseconds 3600
+        set src-subnet 192.168.10.0 255.255.255.0
+        set dst-subnet 192.168.20.0 255.255.255.0
+    next
+end
+
+config firewall policy
+    edit 0
+        set name "Allow-LAN-Traffic"
+        set srcintf "internal"  # Ersätt med rätt interna gränssnitt
+        set dstintf "VPN-to-198.51.100.1"
+        set srcaddr "192.168.10.0/24"
+        set dstaddr "192.168.20.0/24"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+end
+
+# Spara konfigurationen
+end
