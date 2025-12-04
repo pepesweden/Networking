@@ -1,3 +1,4 @@
+```cli
 conf t
 
 ! Konfigurera IKE Policy
@@ -39,3 +40,4 @@ route outside 192.168.20.0 255.255.255.0 198.51.100.1
 access-group outside_access_in in interface outside
 
 end
+```
